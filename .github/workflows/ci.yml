@@ -27,6 +27,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Tests
+        shell: bash
         run: pytest 2>&1 | tee build_failure.log
 
       - name: AI Build Assistant
