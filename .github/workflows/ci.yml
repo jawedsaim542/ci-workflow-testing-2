@@ -1,0 +1,37 @@
+name: CI Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        run: pytest 2>&1 | tee build_failure.log
+
+      - name: AI Build Assistant
+        if: failure()
+        uses: saimjawed254/accenture-intern-assignment@main
+        with:
+          log-file: 'build_failure.log'
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
